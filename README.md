@@ -21,3 +21,10 @@ ações inesperadas.
 pode ocorrer através da console ou de uma interface gráfica.
 11. O software deve ser entregue acompanhado de seu modelo de classes.
 ````
+## Execução
+
+Importar o arquivo poo.sql e visualizar classe Conexao.java para conferir de dados.
+
+## Documentação
+
+[JavaDoc](https://github.com/gutogirardon/Horario-Aula/tree/master/dist/javadoc)
