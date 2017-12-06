@@ -37,7 +37,8 @@ public class DisciplinaDAO extends Conexao {
             fecharConexao(conn);            
         }
         return salvou;
-    }    
+    } 
+   
     public boolean excluirDisciplina(int codigo){
         boolean excluiu = false;
         Connection conn = null;

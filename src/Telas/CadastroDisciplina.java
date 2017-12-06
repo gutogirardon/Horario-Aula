@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import Model.Disciplina;
 import DAO.DisciplinaDAO;
+import DAO.Serializador;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -237,69 +238,77 @@ public class CadastroDisciplina extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbCursoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        if( txtNome.getText() != null && txtNome.getText().trim().length() > 0 &&
-                cmbCurso.getSelectedItem()!= null && cmbCurso.getSelectedItem().toString().trim().length()>0) {
-                
-                Disciplina c = new Disciplina();
-                c.setNome(txtNome.getText());
-                c.setCurso(cmbCurso.getSelectedItem().toString());
-                c.setSemestre(txtSemestre.getText());
-                c.setTurma(txtTurma.getText());
-                
-                DisciplinaDAO pd = new DisciplinaDAO();
-                boolean salvou = pd.salvarDisciplina(c);
-                
-                salvar(salvou);
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!","Dados incompletos", JOptionPane.ERROR_MESSAGE);
+        if (txtNome.getText() != null && txtNome.getText().trim().length() > 0
+                && cmbCurso.getSelectedItem() != null && cmbCurso.getSelectedItem().toString().trim().length() > 0) {
+
+            Disciplina c = new Disciplina();
+            Serializador s = new Serializador();
+
+            c.setNome(txtNome.getText());
+            c.setCurso(cmbCurso.getSelectedItem().toString());
+            c.setSemestre(txtSemestre.getText());
+            c.setTurma(txtTurma.getText());
+
+            DisciplinaDAO pd = new DisciplinaDAO();
+            boolean salvou = pd.salvarDisciplina(c);
+            //aqui chamamos a classe Serializador para serializar o arquivo
+            try {
+                //atualizar o path para o caminho da sua maquina onde quer salvar
+                s.serializar("C:\\Faculdade\\disciplina", c);
+            } catch (Exception ex) {
+                System.err.println("Falha ao serializar! - " + ex.toString());
             }
+            //fim do método de serialização
+            salvar(salvou);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!", "Dados incompletos", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        if( txtNome.getText() != null && txtNome.getText().trim().length() > 0 &&
-                cmbCurso.getSelectedItem()!= null && cmbCurso.getSelectedItem().toString().trim().length()>0) {
-                
-                Object Codigo = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 0);
-                int cod = Integer.parseInt(Codigo.toString());
-            
-                Disciplina c = new Disciplina();
-                c.setDisciplinaID(cod);
-                c.setNome(txtNome.getText());
-                c.setCurso(cmbCurso.getSelectedItem().toString());
-                c.setSemestre(txtSemestre.getText());
-                c.setTurma(txtTurma.getText());
-                
-                
-                DisciplinaDAO pd = new DisciplinaDAO();
-                boolean atualizou = pd.atualizarDisciplina(c);
-                
-                salvar(atualizou);
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!","Dados incompletos", JOptionPane.ERROR_MESSAGE);
-            }
+        if (txtNome.getText() != null && txtNome.getText().trim().length() > 0
+                && cmbCurso.getSelectedItem() != null && cmbCurso.getSelectedItem().toString().trim().length() > 0) {
+
+            Object Codigo = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 0);
+            int cod = Integer.parseInt(Codigo.toString());
+
+            Disciplina c = new Disciplina();
+            c.setDisciplinaID(cod);
+            c.setNome(txtNome.getText());
+            c.setCurso(cmbCurso.getSelectedItem().toString());
+            c.setSemestre(txtSemestre.getText());
+            c.setTurma(txtTurma.getText());
+
+            DisciplinaDAO pd = new DisciplinaDAO();
+            boolean atualizou = pd.atualizarDisciplina(c);
+
+            salvar(atualizou);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!", "Dados incompletos", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void tblDisciplinaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDisciplinaMouseClicked
-        if(tblDisciplina.getSelectedRow() > 0){
+        if (tblDisciplina.getSelectedRow() > 0) {
 
             Object nome = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 1);
             String n = nome.toString();
             txtNome.setText(n);
-            
+
             Object periodo = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 2);
             String e = periodo.toString();
             cmbCurso.setSelectedItem(e);
-            
+
             Object Semestre = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 3);
             String s = Semestre.toString();
             txtSemestre.setText(s);
-            
+
             Object turma = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 4);
             String t = turma.toString();
             txtTurma.setText(t);
-            
+
         }
     }//GEN-LAST:event_tblDisciplinaMouseClicked
 
@@ -308,26 +317,26 @@ public class CadastroDisciplina extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimparActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        if(tblDisciplina.getSelectedRow() >= 0){
+        if (tblDisciplina.getSelectedRow() >= 0) {
             Object Codigo = tblDisciplina.getModel().getValueAt(tblDisciplina.getSelectedRow(), 0);
             Codigo.toString();
             String c = Codigo.toString();
             int cod = Integer.parseInt(c);
             DisciplinaDAO cd = new DisciplinaDAO();
             boolean excluiu = cd.excluirDisciplina(cod);
-            
-            if(excluiu){
+
+            if (excluiu) {
                 atualizarTabela();
-                JOptionPane.showMessageDialog(null, "Disciplina apagada com sucesso!.", 
+                JOptionPane.showMessageDialog(null, "Disciplina apagada com sucesso!.",
                         "Apagar Disciplina", JOptionPane.INFORMATION_MESSAGE);
                 limparCampos();
             } else {
-                JOptionPane.showMessageDialog(null, "Disciplina não foi apagada.", 
+                JOptionPane.showMessageDialog(null, "Disciplina não foi apagada.",
                         "Apagar Disciplina", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Selecione uma linha.", 
-                        "Dados incompletos", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Selecione uma linha.",
+                    "Dados incompletos", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
@@ -383,108 +392,108 @@ public class CadastroDisciplina extends javax.swing.JFrame {
     private javax.swing.JTextField txtSemestre;
     private javax.swing.JTextField txtTurma;
     // End of variables declaration//GEN-END:variables
-    public final void popularComboDisciplina(){
+    public final void popularComboDisciplina() {
         DisciplinaDAO a = new DisciplinaDAO();
         Connection conn = null;
-         
-         try {
+
+        try {
             conn = a.abrirConexao();
             //BUSCA DE TODOS OS NOMES CONTIDOS NA TABELA
-            if(conn != null){
+            if (conn != null) {
                 String Consulta = "SELECT DISTINCT nome FROM Curso ORDER BY nome";
                 Statement stm = conn.createStatement();
                 ResultSet resultado = stm.executeQuery(Consulta);
-                
+
                 int cont = 0;
                 List<String> list = new ArrayList<String>();
                 //LOOP REALIZADO PARA PREENCHER A LIST COM OS VALORES RETORNADOS
-                while( resultado.next() ) {    
-                cont++;
-           
-                String nome = resultado.getString("Nome"); 
-                
-                list.add(nome);
-                DefaultComboBoxModel defaultComboModel = new DefaultComboBoxModel(list.toArray());
-                cmbCurso.setModel(defaultComboModel);
-              
+                while (resultado.next()) {
+                    cont++;
+
+                    String nome = resultado.getString("Nome");
+
+                    list.add(nome);
+                    DefaultComboBoxModel defaultComboModel = new DefaultComboBoxModel(list.toArray());
+                    cmbCurso.setModel(defaultComboModel);
+
                 }
-                
+
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println("Erro ao consultar os dados do BD.");
         } finally {
             a.fecharConexao(conn);
         }
-        
+
     }
-    
-    public final void exibirInformacoes(){
+
+    public final void exibirInformacoes() {
         DisciplinaDAO p = new DisciplinaDAO();
         Connection conn = null;
-         
-         try {
+
+        try {
             conn = p.abrirConexao();
-           
-            if(conn != null){
+
+            if (conn != null) {
                 String Consulta = "SELECT * FROM Disciplina ORDER BY NOME";
                 Statement stm = conn.createStatement();
                 ResultSet resultado = stm.executeQuery(Consulta);
-                
+
                 int cont = 0;
-           
-                while( resultado.next() ) {    
-                cont++;
-                
-                String DisciplinaID = resultado.getString("DisciplinaID"); 
-                String nome = resultado.getString("Nome"); 
-                String nomeCurso = resultado.getString("NomeCurso"); 
-                //alterando aqui
-                String semestre = resultado.getString("Semestre");
-                String turma = resultado.getString("Turma");
-                
-                DefaultTableModel modelo = (DefaultTableModel) tblDisciplina.getModel();
-                String[] coluna = new String[] {
-                resultado.getString("DisciplinaID"), 
-                resultado.getString("Nome"), 
-                resultado.getString("NomeCurso"),
-                resultado.getString("Semestre"),
-                resultado.getString("Turma")}; 
-                modelo.addRow(coluna);
+
+                while (resultado.next()) {
+                    cont++;
+
+                    String DisciplinaID = resultado.getString("DisciplinaID");
+                    String nome = resultado.getString("Nome");
+                    String nomeCurso = resultado.getString("NomeCurso");
+                    //alterando aqui
+                    String semestre = resultado.getString("Semestre");
+                    String turma = resultado.getString("Turma");
+
+                    DefaultTableModel modelo = (DefaultTableModel) tblDisciplina.getModel();
+                    String[] coluna = new String[]{
+                        resultado.getString("DisciplinaID"),
+                        resultado.getString("Nome"),
+                        resultado.getString("NomeCurso"),
+                        resultado.getString("Semestre"),
+                        resultado.getString("Turma")};
+                    modelo.addRow(coluna);
                 }
-                
+
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println("Erro ao consultar os dados do BD.");
         } finally {
             p.fecharConexao(conn);
         }
-        
+
     }
-    
-    public void salvar(boolean s){
-        if(s){
+
+    public void salvar(boolean s) {
+        if (s) {
             limparCampos();
             atualizarTabela();
-            JOptionPane.showMessageDialog(null, "Curso salvo com sucesso!","Cadastrar curso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Curso salvo com sucesso!", "Cadastrar curso", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "Erro ao atualizar professor(a)!","Atualizar Professor(a)", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erro ao atualizar professor(a)!", "Atualizar Professor(a)", JOptionPane.ERROR_MESSAGE);
         }
-        
+
     }
-    
-    public void atualizarTabela(){
+
+    public void atualizarTabela() {
         esconderInfomacoes();
         exibirInformacoes();
     }
-    
-    public void limparCampos(){
+
+    public void limparCampos() {
         txtNome.setText("");
         txtTurma.setText("");
         txtSemestre.setText("");
         cmbCurso.setSelectedIndex(0);
     }
-    
-    public void esconderInfomacoes(){
+
+    public void esconderInfomacoes() {
         DefaultTableModel modelo = (DefaultTableModel) tblDisciplina.getModel();
         modelo.setNumRows(0);
     }

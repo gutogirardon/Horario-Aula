@@ -1,11 +1,13 @@
-    /*
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package Telas;
+
 import Model.Curso;
 import DAO.CursoDAO;
+import DAO.Serializador;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -211,87 +213,94 @@ public class CadastroCurso extends javax.swing.JFrame {
     }//GEN-LAST:event_cmbDuracaoActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        if(tblCurso.getSelectedRow() >= 0){
+        if (tblCurso.getSelectedRow() >= 0) {
             Object Codigo = tblCurso.getModel().getValueAt(tblCurso.getSelectedRow(), 0);
             Codigo.toString();
             String c = Codigo.toString();
             int cod = Integer.parseInt(c);
             CursoDAO cd = new CursoDAO();
             boolean excluiu = cd.excluirCurso(cod);
-            
-            if(excluiu){
+
+            if (excluiu) {
                 atualizarTabela();
-                JOptionPane.showMessageDialog(null, "Curso apagado.", 
+                JOptionPane.showMessageDialog(null, "Curso apagado.",
                         "Apagar Curso", JOptionPane.INFORMATION_MESSAGE);
                 limparCampos();
             } else {
-                JOptionPane.showMessageDialog(null, "Curso não foi apagado.", 
+                JOptionPane.showMessageDialog(null, "Curso não foi apagado.",
                         "Apagar Curso", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Selecione uma linha.", 
-                        "Dados incompletos", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Selecione uma linha.",
+                    "Dados incompletos", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        if( txtCurso.getText() != null && txtCurso.getText().trim().length() > 0 &&
-                cmbPeriodo.getSelectedItem()!= null && cmbPeriodo.getSelectedItem().toString().trim().length()>0 &&
-                cmbDuracao.getSelectedItem()!= null && cmbDuracao.getSelectedItem().toString().trim().length()>0) {
-                
-                Curso c = new Curso();
-                c.setNome(txtCurso.getText());
-                c.setPeriodo(cmbPeriodo.getSelectedItem().toString());
-                c.setDuracao(cmbDuracao.getSelectedItem().toString());
-                
-                
-                CursoDAO pd = new CursoDAO();
-                boolean salvou = pd.salvarCurso(c);
-                
-                salvar(salvou);
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!","Dados incompletos", JOptionPane.ERROR_MESSAGE);
+        if (txtCurso.getText() != null && txtCurso.getText().trim().length() > 0
+                && cmbPeriodo.getSelectedItem() != null && cmbPeriodo.getSelectedItem().toString().trim().length() > 0
+                && cmbDuracao.getSelectedItem() != null && cmbDuracao.getSelectedItem().toString().trim().length() > 0) {
+
+            Curso c = new Curso();
+            Serializador s = new Serializador();
+            c.setNome(txtCurso.getText());
+            c.setPeriodo(cmbPeriodo.getSelectedItem().toString());
+            c.setDuracao(cmbDuracao.getSelectedItem().toString());
+
+            CursoDAO pd = new CursoDAO();
+            boolean salvou = pd.salvarCurso(c);
+
+            //aqui chamamos a classe Serializador para serializar o arquivo
+            try {
+                //atualizar o path para o caminho da sua maquina onde quer salvar
+                s.serializar("C:\\Faculdade\\curso", c);
+            } catch (Exception ex) {
+                System.err.println("Falha ao serializar! - " + ex.toString());
             }
+            //fim do método de serialização
+            salvar(salvou);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!", "Dados incompletos", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void tblCursoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCursoMouseClicked
-        if(tblCurso.getSelectedRow() >= 0){
+        if (tblCurso.getSelectedRow() >= 0) {
 
             Object nome = tblCurso.getModel().getValueAt(tblCurso.getSelectedRow(), 1);
             String n = nome.toString();
             txtCurso.setText(n);
-            
+
             Object periodo = tblCurso.getModel().getValueAt(tblCurso.getSelectedRow(), 2);
             String e = periodo.toString();
             cmbPeriodo.setSelectedItem(e);
-            
+
             Object duracao = tblCurso.getModel().getValueAt(tblCurso.getSelectedRow(), 3);
             String d = duracao.toString();
             cmbDuracao.setSelectedItem(d);
-            
+
         }
     }//GEN-LAST:event_tblCursoMouseClicked
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        if (txtCurso.getText() != null && txtCurso.getText().trim().length() > 0){
-            
+        if (txtCurso.getText() != null && txtCurso.getText().trim().length() > 0) {
+
             Object Codigo = tblCurso.getModel().getValueAt(tblCurso.getSelectedRow(), 0);
             int cod = Integer.parseInt(Codigo.toString());
-            
+
             Curso c = new Curso();
             c.setCursoID(cod);
             c.setNome(txtCurso.getText());
             c.setPeriodo(cmbPeriodo.getSelectedItem().toString());
             c.setDuracao(cmbDuracao.getSelectedItem().toString());
-            
-            
+
             CursoDAO cd = new CursoDAO();
             boolean atualizou = cd.atualizarCurso(c);
             salvar(atualizou);
-            
+
         } else {
-            JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!","Dados incompletos", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Todas as informações precisam ser preenchidas!", "Dados incompletos", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
@@ -349,70 +358,70 @@ public class CadastroCurso extends javax.swing.JFrame {
     private javax.swing.JTable tblCurso;
     private javax.swing.JTextField txtCurso;
     // End of variables declaration//GEN-END:variables
-    public final void exibirInformacoes(){
+    public final void exibirInformacoes() {
         CursoDAO p = new CursoDAO();
         Connection conn = null;
-         
-         try {
+
+        try {
             conn = p.abrirConexao();
-           
-            if(conn != null){
+
+            if (conn != null) {
                 String Consulta = "SELECT * FROM Curso ORDER BY NOME";
                 Statement stm = conn.createStatement();
                 ResultSet resultado = stm.executeQuery(Consulta);
-                
+
                 int cont = 0;
-           
-                while( resultado.next() ) {    
-                cont++;
-                
-                String professorID = resultado.getString("CursoID"); 
-                String nome = resultado.getString("Nome"); 
-                String email = resultado.getString("Periodo"); 
-                String telefone = resultado.getString("Duracao"); 
-                
-                DefaultTableModel modelo = (DefaultTableModel) tblCurso.getModel();
-                String[] coluna = new String[] {
-                resultado.getString("CursoID"), 
-                resultado.getString("Nome"), 
-                resultado.getString("Periodo"), 
-                resultado.getString("Duracao") }; 
-                modelo.addRow(coluna);
+
+                while (resultado.next()) {
+                    cont++;
+
+                    String professorID = resultado.getString("CursoID");
+                    String nome = resultado.getString("Nome");
+                    String email = resultado.getString("Periodo");
+                    String telefone = resultado.getString("Duracao");
+
+                    DefaultTableModel modelo = (DefaultTableModel) tblCurso.getModel();
+                    String[] coluna = new String[]{
+                        resultado.getString("CursoID"),
+                        resultado.getString("Nome"),
+                        resultado.getString("Periodo"),
+                        resultado.getString("Duracao")};
+                    modelo.addRow(coluna);
                 }
-                
+
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             System.out.println("Erro ao consultar os dados do BD.");
         } finally {
             p.fecharConexao(conn);
         }
-        
+
     }
 
-    public void esconderInfomacoes(){
+    public void esconderInfomacoes() {
         DefaultTableModel modelo = (DefaultTableModel) tblCurso.getModel();
         modelo.setNumRows(0);
     }
-    
-    public void atualizarTabela(){
+
+    public void atualizarTabela() {
         esconderInfomacoes();
         exibirInformacoes();
     }
-    
-    public void limparCampos(){
+
+    public void limparCampos() {
         txtCurso.setText("");
         cmbDuracao.setSelectedIndex(0);
         cmbPeriodo.setSelectedIndex(0);
     }
-    
-    public void salvar(boolean s){
-        if(s){
+
+    public void salvar(boolean s) {
+        if (s) {
             limparCampos();
             atualizarTabela();
-            JOptionPane.showMessageDialog(null, "Curso salvo com sucesso!","Cadastrar curso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Curso salvo com sucesso!", "Cadastrar curso", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "Erro ao atualizar curso!","Atualizar Curso", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Erro ao atualizar curso!", "Atualizar Curso", JOptionPane.ERROR_MESSAGE);
         }
-        
+
     }
 }

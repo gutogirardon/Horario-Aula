@@ -5,11 +5,13 @@
  */
 package Model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Gustavo Girardon
  */
-public class Disciplina {
+public class Disciplina implements Serializable {
     private int DisciplinaID;
     private String nome;
     private String curso;
